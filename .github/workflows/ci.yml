@@ -1,0 +1,57 @@
+# Pipeline de qualidade: typecheck -> lint -> formatação -> testes com cobertura -> SonarQube.
+# Análise no SonarQube Cloud (sonarcloud.io). Secret necessário: SONAR_TOKEN.
+# Os testes de integração dependem da API real e rodam localmente (npm run test:integration).
+
+name: CI
+
+on:
+  push:
+    branches: [main, staging]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  qualidade:
+    runs-on: ubuntu-24.04
+    env:
+      EXPO_PUBLIC_API_URL: http://127.0.0.1:8000/
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # histórico completo para o Sonar calcular "new code"
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint (regras Sonar via eslint-plugin-sonarjs)
+        run: npm run lint
+
+      - name: Formatação
+        run: npm run format:check
+
+      - name: Testes com cobertura
+        run: npm run test:coverage
+
+      - name: Expo Doctor
+        run: npx expo-doctor
+
+      - name: Análise SonarQube
+        uses: SonarSource/sonarqube-scan-action@v8
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Quality Gate
+        uses: SonarSource/sonarqube-quality-gate-action@v1
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
