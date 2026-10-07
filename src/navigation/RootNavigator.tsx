@@ -7,7 +7,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useMemo } from 'react';
 
 import { CheckoutScreen } from '@/screens/checkout/CheckoutScreen';
-import { NotificationsScreen } from '@/screens/notifications/NotificationsScreen';
+import {
+  MarkAllReadButton,
+  NotificationsScreen,
+} from '@/screens/notifications/NotificationsScreen';
 import { OrderTrackingScreen } from '@/screens/orders/OrderTrackingScreen';
 import { ProductDetailsScreen } from '@/screens/product/ProductDetailsScreen';
 import { AddressesScreen } from '@/screens/profile/AddressesScreen';
@@ -23,6 +26,8 @@ import { MainTabs } from './MainTabs';
 import type { AppStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
+
+const renderMarkAllRead = () => <MarkAllReadButton />;
 
 function AppNavigator() {
   return (
@@ -52,7 +57,7 @@ function AppNavigator() {
       <Stack.Screen
         name="Notifications"
         component={NotificationsScreen}
-        options={{ title: 'Notificações' }}
+        options={{ title: 'Notificações', headerRight: renderMarkAllRead }}
       />
       <Stack.Screen
         name="Settings"

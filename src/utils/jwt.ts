@@ -34,7 +34,7 @@ export function decodeJwt(token: string): JwtClaims | null {
   const payload = token.split('.')[1];
   if (!payload) return null;
   try {
-    const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+    const base64 = payload.replaceAll('-', '+').replaceAll('_', '/');
     return JSON.parse(base64Decode(base64)) as JwtClaims;
   } catch {
     return null;
