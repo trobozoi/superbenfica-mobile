@@ -37,7 +37,7 @@ interface ParsedUrl {
   rest: string;
 }
 
-const APP_ENVS: readonly AppEnv[] = ['development', 'preview', 'production'];
+const APP_ENVS: ReadonlySet<string> = new Set<AppEnv>(['development', 'preview', 'production']);
 const LOCAL_HOSTS = new Set(['127.0.0.1', 'localhost']);
 /**
  * Endereço da máquina host visto de dentro do emulador Android.
@@ -96,7 +96,7 @@ function deriveWsUrl(api: ParsedUrl): ParsedUrl {
 /** Monta e valida a configuração. Exportada para testes. */
 export function buildConfig(extra: RawExtra): AppConfig {
   const appEnv = (extra.appEnv ?? 'development') as AppEnv;
-  if (!APP_ENVS.includes(appEnv)) {
+  if (!APP_ENVS.has(appEnv)) {
     throw new ConfigError(`APP_ENV desconhecido: "${extra.appEnv}".`);
   }
   if (!extra.apiUrl) {

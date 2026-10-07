@@ -1,5 +1,4 @@
 import { FlashList } from '@shopify/flash-list';
-import { useLayoutEffect } from 'react';
 
 import { AppText } from '@/components/ui/AppText';
 import { Button } from '@/components/ui/Button';
@@ -13,24 +12,24 @@ import {
   markAllAsRead,
   markAsRead,
   selectNotifications,
+  selectUnreadCount,
   type AppNotification,
 } from '@/store/slices/notificationsSlice';
 import { useTheme } from '@/theme/ThemeProvider';
 import { formatDateTime } from '@/utils/format';
 
+/** Botão do header: marca todas como lidas (só aparece se houver não lidas). */
+export function MarkAllReadButton() {
+  const dispatch = useAppDispatch();
+  const hasUnread = useAppSelector((state) => selectUnreadCount(state) > 0);
+  if (!hasUnread) return null;
+  return <Button title="Ler todas" variant="ghost" onPress={() => dispatch(markAllAsRead())} />;
+}
+
 export function NotificationsScreen({ navigation }: Readonly<AppScreenProps<'Notifications'>>) {
   const dispatch = useAppDispatch();
   const { colors, spacing } = useTheme();
   const items = useAppSelector(selectNotifications);
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () =>
-        items.some((n) => !n.read) ? (
-          <Button title="Ler todas" variant="ghost" onPress={() => dispatch(markAllAsRead())} />
-        ) : null,
-    });
-  }, [navigation, items, dispatch]);
 
   const open = (item: AppNotification) => {
     dispatch(markAsRead(item.id));

@@ -24,6 +24,28 @@ const ICONS: Record<keyof MainTabParamList, [IconName, IconName]> = {
   Profile: ['person', 'person-outline'],
 };
 
+interface TabIconProps {
+  focused: boolean;
+  color: string;
+  size: number;
+}
+
+/** Fábrica do ícone de cada aba (fora do componente, para não recriar componentes a cada render). */
+function tabIcon(routeName: keyof MainTabParamList) {
+  const [active, inactive] = ICONS[routeName];
+  return function TabIcon({ focused, color, size }: Readonly<TabIconProps>) {
+    return <Ionicons name={focused ? active : inactive} size={size} color={color} />;
+  };
+}
+
+const TAB_ICONS = {
+  Home: tabIcon('Home'),
+  Explore: tabIcon('Explore'),
+  Cart: tabIcon('Cart'),
+  Orders: tabIcon('Orders'),
+  Profile: tabIcon('Profile'),
+} satisfies Record<keyof MainTabParamList, ReturnType<typeof tabIcon>>;
+
 export function MainTabs() {
   const { colors } = useTheme();
   const cartCount = useAppSelector(selectCartCount);
@@ -33,10 +55,7 @@ export function MainTabs() {
       screenOptions={({ route }) => ({
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textMuted,
-        tabBarIcon: ({ focused, color, size }) => {
-          const [active, inactive] = ICONS[route.name];
-          return <Ionicons name={focused ? active : inactive} size={size} color={color} />;
-        },
+        tabBarIcon: TAB_ICONS[route.name],
       })}
     >
       <Tab.Screen

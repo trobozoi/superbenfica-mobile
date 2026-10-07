@@ -36,7 +36,12 @@ export function LoginScreen({ navigation }: Readonly<AuthScreenProps<'Login'>>) 
   }, [fieldErrors, setError]);
 
   // Limpa a mensagem de erro ao sair da tela.
-  useEffect(() => () => void dispatch(clearAuthError()), [dispatch]);
+  useEffect(
+    () => () => {
+      dispatch(clearAuthError());
+    },
+    [dispatch],
+  );
 
   const onSubmit = handleSubmit((values) => {
     void dispatch(login(values));

@@ -29,7 +29,12 @@ export function RegisterScreen() {
     }
   }, [fieldErrors, setError]);
 
-  useEffect(() => () => void dispatch(clearAuthError()), [dispatch]);
+  useEffect(
+    () => () => {
+      dispatch(clearAuthError());
+    },
+    [dispatch],
+  );
 
   const onSubmit = handleSubmit(({ confirmPassword: _confirm, ...values }) => {
     void dispatch(register(values));

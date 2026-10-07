@@ -21,7 +21,10 @@ import { useTheme } from '@/theme/ThemeProvider';
 import type { Produto, StatusPedido } from '@/types/api';
 import { CATEGORIA_LABEL, CATEGORIAS } from '@/utils/format';
 
-const FINAL_STATUSES: readonly StatusPedido[] = ['FINALIZADO', 'CANCELADO'];
+const FINAL_STATUSES: ReadonlySet<StatusPedido> = new Set<StatusPedido>([
+  'FINALIZADO',
+  'CANCELADO',
+]);
 const HIGHLIGHT_COUNT = 6;
 
 export function HomeScreen({ navigation }: Readonly<TabScreenProps<'Home'>>) {
@@ -46,7 +49,7 @@ export function HomeScreen({ navigation }: Readonly<TabScreenProps<'Home'>>) {
   useEffect(() => {
     if (lastOrderEvent) void refetchOrders({ silent: true });
   }, [lastOrderEvent, refetchOrders]);
-  const activeOrder = orders.data?.results.find((o) => !FINAL_STATUSES.includes(o.status));
+  const activeOrder = orders.data?.results.find((o) => !FINAL_STATUSES.has(o.status));
 
   const openProduct = useCallback(
     (product: Produto) =>
